@@ -89,136 +89,122 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               )
                             : SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: DataTable(
-                                    columnSpacing: 40,
-                                    horizontalMargin: 24,
-                                    headingRowHeight: 56,
-                                    dataRowHeight: 60,
-                                    dividerThickness: 1.2,
-                                    headingRowColor: MaterialStateProperty.all(
-                                      Colors.grey.shade300,
+                                scrollDirection: Axis.vertical,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: DataTable(
+                                      columnSpacing: 40,
+                                      horizontalMargin: 24,
+                                      headingRowHeight: 56,
+                                      dataRowHeight: 60,
+                                      dividerThickness: 1.2,
+                                      headingRowColor:
+                                          MaterialStateProperty.all(
+                                            Colors.grey.shade300,
+                                          ),
+                                      headingTextStyle: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                      columns: const [
+                                        DataColumn(label: Text('Sr. No')),
+                                        DataColumn(label: Text('Patient Name')),
+                                        DataColumn(label: Text('Contact')),
+                                        DataColumn(label: Text('Advance')),
+                                        DataColumn(label: Text('Total Bill')),
+                                        DataColumn(label: Text('Pending')),
+                                        DataColumn(label: Text('Status')),
+                                        DataColumn(label: Text('View')),
+                                        DataColumn(label: Text('Edit')),
+                                      ],
+                                      rows: List.generate(filteredClaims.length, (
+                                        index,
+                                      ) {
+                                        final originalIndex =
+                                            filteredClaims[index].key;
+                                        final claim =
+                                            filteredClaims[index].value;
+
+                                        return DataRow(
+                                          color:
+                                              MaterialStateProperty.resolveWith(
+                                                (states) => index.isEven
+                                                    ? Colors.grey.shade50
+                                                    : Colors.white,
+                                              ),
+                                          cells: [
+                                            DataCell(Text('${index + 1}')),
+                                            DataCell(Text(claim.patientName)),
+                                            DataCell(Text(claim.contactNumber)),
+                                            DataCell(
+                                              Text(
+                                                '₹${claim.advance.toStringAsFixed(2)}',
+                                              ),
+                                            ),
+                                            DataCell(
+                                              Text(
+                                                '₹${claim.totalBill.toStringAsFixed(2)}',
+                                              ),
+                                            ),
+                                            DataCell(
+                                              Text(
+                                                '₹${claim.pendingAmount.toStringAsFixed(2)}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: claim.pendingAmount > 0
+                                                      ? Colors.red
+                                                      : Colors.green,
+                                                ),
+                                              ),
+                                            ),
+                                            DataCell(
+                                              StatusChip(status: claim.status),
+                                            ),
+                                            DataCell(
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.visibility_outlined,
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          ClaimDetailScreen(
+                                                            index:
+                                                                originalIndex,
+                                                          ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            DataCell(
+                                              IconButton(
+                                                icon: const Icon(
+                                                  Icons.edit_outlined,
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          EditClaimScreen(
+                                                            claim: claim,
+                                                            index:
+                                                                originalIndex,
+                                                          ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }),
                                     ),
-                                    headingTextStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                    columns: const [
-                                      DataColumn(label: Text('Sr. No')),
-                                      DataColumn(label: Text('Patient Name')),
-                                      DataColumn(label: Text('Contact')),
-                                      DataColumn(label: Text('Advance')),
-                                      DataColumn(label: Text('Total Bill')),
-                                      DataColumn(label: Text('Pending')),
-                                      DataColumn(label: Text('Status')),
-                                      DataColumn(label: Text('View')),
-                                      DataColumn(label: Text('Edit')),
-                                    ],
-                                    rows: List.generate(filteredClaims.length, (
-                                      index,
-                                    ) {
-                                      final originalIndex =
-                                          filteredClaims[index].key;
-                                      final claim = filteredClaims[index].value;
-
-                                      return DataRow(
-                                        color:
-                                            MaterialStateProperty.resolveWith(
-                                              (states) => index.isEven
-                                                  ? Colors.grey.shade50
-                                                  : Colors.white,
-                                            ),
-                                        cells: [
-                                          DataCell(
-                                            Text(
-                                              '${index + 1}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-
-                                          DataCell(
-                                            Text(
-                                              claim.patientName,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                          ),
-                                          DataCell(Text(claim.contactNumber)),
-                                          DataCell(
-                                            Text(
-                                              '₹${claim.advance.toStringAsFixed(2)}',
-                                            ),
-                                          ),
-                                          DataCell(
-                                            Text(
-                                              '₹${claim.totalBill.toStringAsFixed(2)}',
-                                            ),
-                                          ),
-                                          DataCell(
-                                            Text(
-                                              '₹${claim.pendingAmount.toStringAsFixed(2)}',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: claim.pendingAmount > 0
-                                                    ? Colors.red
-                                                    : Colors.green,
-                                              ),
-                                            ),
-                                          ),
-                                          DataCell(
-                                            StatusChip(status: claim.status),
-                                          ),
-
-                                          /// VIEW
-                                          DataCell(
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.visibility_outlined,
-                                              ),
-                                              tooltip: 'View Claim Details',
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        ClaimDetailScreen(
-                                                          index: originalIndex,
-                                                        ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-
-                                          /// EDIT
-                                          DataCell(
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.edit_outlined,
-                                              ),
-                                              tooltip: 'Edit Insurance status',
-                                              onPressed: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        EditClaimScreen(
-                                                          claim: claim,
-                                                          index: originalIndex,
-                                                        ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }),
                                   ),
                                 ),
                               ),
